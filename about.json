@@ -1,0 +1,17 @@
+{
+  "name": "Versatile Banner Theme Component CSS-light V17",
+  "component": true,
+  "license_url": null,
+  "about_url": null,
+  "authors": null,
+  "theme_version": null,
+  "minimum_discourse_version": null,
+  "maximum_discourse_version": null,
+  "assets": {
+    "narrow_road": "assets/narrow_road.webp",
+    "the_gate": "assets/the_gate.webp"
+  },
+  "color_schemes": {},
+  "modifiers": {},
+  "learn_more": "https://meta.discourse.org/t/beginners-guide-to-using-discourse-themes/91966"
+}

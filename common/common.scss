@@ -1,0 +1,1563 @@
+/* ==========================================================
+   VICTORIOUS CHRISTIANS — LANDING DESIGN SYSTEM
+   "NARROW ROAD IV"  ·  V17  (the road gets its margin; the gate merges)
+   Component: "Versatile Banner Theme Component CSS-light V17"
+   File: common/common.scss   —   FULL REPLACEMENT.
+   Requires: "Versatile Banner-Light V11" (main_heading_content).
+   ----------------------------------------------------------
+   WHAT CHANGED FROM V10  (search "V11")
+   The remaining Claude Design tokens and the 37 type styles are
+   declared in the token block. Nothing references them yet.
+
+   WHAT CHANGED FROM V9   (search "V10")
+   The token block moved from :root to body:has(.vc-landing-wrapper)
+   so the landing stops overwriting site-wide --vc-* brand tokens.
+   Nothing else changed.
+
+   WHAT CHANGED FROM V8   (search "V9" to find every edit)
+
+   1. HEADLINE ALIGNMENT BUG. Stock VB ships
+        .banner-box h1, h2, h3 { text-align: center }
+      which ties .vc-landing-wrapper h* on specificity and won on load
+      order, so every headline sat centred over left-aligned copy.
+      §3 now resets it to `inherit`: left everywhere, centred only in
+      the two blocks that are centred on purpose (cost, come-and-see).
+   2. HEADER. Frosted surface once scrolled (transparent only while
+      html.vc-at-top), brand-coloured auth buttons, no search field.
+   3. LAZY PLATES. .vc-fig images wait for .vc-img-on (JS, fail-open).
+   4. SCRIPTURE VOICE. Quotations are set in Newsreader; the world's
+      lines stay in Outfit italic. Two voices, on purpose.
+   5. MOTION WITH MEANING. Pairs: the answer arrives after the shrug
+      and the shrug recedes. Canon: 66 bars fill in order + readout.
+      Meter: climbs from guttering to "holds" when it enters.
+   6. PHONE JOIN BAR. .vc-joinbar, <=700px, shown by JS only.
+   7. POLISH. Designed :focus-visible ring, rebalanced beat columns.
+
+   ----------------------------------------------------------
+   V8 NOTES (unchanged)
+   WHAT CHANGED FROM V7
+
+   V7 got the contrast rhythm right at the SECTION level, but two
+   blocks were still just type on a field — the foundation block
+   read as bland because nothing in it carried colour. V8 rebuilds
+   the page on the five-section production copy and gives EVERY
+   block its own surface treatment.
+
+   1. NO PLAIN BLOCKS. Each section is now a designed surface:
+        hero ........ white + rose/amber blooms, portrait card
+        charge ...... warm peach gradient + the open-Bible plate
+        evidence .... near-black, two glows, five pairs
+        answer ...... white, with a DARK INK CARD carrying the canon
+        the body .... rose-tinted band, dark campaign card beside an
+                      amber trivia card
+        singles ..... deep sunset band, three beat cards in three
+                      different treatments (white / ink / glass)
+        cost ........ near-black, quiet on purpose
+        invitation .. white with a warm bloom — the page ends bright
+
+   2. VALUE, NOT TINT (kept from V7, extended)
+        white → peach gradient → DARK → white → rose → DEEP SUNSET
+        → DARK → white → dark foot
+      No two adjacent blocks share a value. The two darks are
+      separated by four blocks; the two saturated bands never touch.
+
+   3. THE PAIR TABLE GAINED ITS BEST ROW. "Judge not." → "Judge
+      with right judgment." is set as a featured row: amber-tinted
+      fill, brighter border, larger answer. It proves the thesis in
+      one line, so it gets the emphasis.
+
+   4. THE SINGLES SECTION ARGUES IN THREE BEATS instead of one
+      paragraph: Veritas (no swiping), the ten dimensions with a
+      67/33 weight bar, and the courtship pace as three numbered
+      steps. It is the block the site most needs used.
+
+   CONTAINS, IN ORDER
+     1. Fonts, tokens, image block
+     2. Landing takeover (incl. the mobile full-bleed fix)
+     3. Versatile Banner wrapper resets
+     4. The landing design system
+     5. "How it works" modal
+     6. Motion + scroll reveal
+     7. Responsive
+   ========================================================== */
+/* V9: + Newsreader for Scripture quotations; Outfit 300 dropped (unused) */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap');
+
+/* V10 — TOKEN SCOPE. This block was on :root through V9, which made
+   every --vc-* here global. VC Canvas and other components define
+   --vc-ink, --vc-plum, --vc-grad, --vc-line, --vc-display, --vc-orange
+   and --vc-text on :root with different meanings, and this sheet loads
+   after them, so it overwrote them on EVERY page for EVERY user.
+   Scoped to pages showing the landing: header, wrapper and modal all
+   sit inside <body>, so they inherit exactly as before.              */
+body:has(.vc-landing-wrapper) {
+  /* ---- surfaces ---------------------------------------------- */
+  --vc-white: #FFFFFF;
+  --vc-white-warm: #FFFDFC;
+  --vc-dark: #120C10;      /* evidence + cost                    */
+  --vc-ink-card: linear-gradient(158deg, #1E1219 0%, #2A121D 52%, #35180F 100%);
+
+  --vc-peach: linear-gradient(168deg, #FFF7F0 0%, #FFEDDC 58%, #FFE3D0 100%);
+  --vc-rose: linear-gradient(180deg, #F2E9ED 0%, #EBE0E6 100%);
+
+  /* V15 — THE VALUE ARC. Light and dark still alternate so the page
+     keeps its relief, but the trend descends: each light block sits a
+     little deeper than the last, each dark block a little darker,
+     until "the cost" is nearly black and "Come and see" breaks open
+     as the brightest frame on the page. */
+  --vc-dusk: linear-gradient(180deg, #FBF7F8 0%, #F6EFF2 100%);  /* the answer */
+  --vc-dark-1: #1A1017;                                          /* the evidence */
+  --vc-dark-2: #0A060A;                                          /* the cost */
+
+  /* ---- ink --------------------------------------------------- */
+  --vc-ink: #171114;
+  --vc-body: #574E53;      /* 7.1:1 on white                     */
+  --vc-body-warm: #55474A; /* body copy on the peach band        */
+  --vc-mute: #7A7076;
+  --vc-line: rgba(23, 17, 20, 0.10);
+  --vc-line-2: rgba(23, 17, 20, 0.12);
+
+  /* ---- the sunset, at working strength ----------------------- */
+  --vc-red: #D81B45;
+  --vc-red-deep: #A8123A;
+  --vc-orange: #C2540B;
+  --vc-orange-warm: #B0480A;  /* eyebrow on the peach band       */
+  --vc-plum: #8A1140;
+  --vc-plum-ink: #A31347;
+
+  --vc-grad: linear-gradient(100deg, #D81B45 0%, #C2540B 100%);
+  --vc-grad-text: linear-gradient(96deg, #E01A46 0%, #E06A00 92%);
+  --vc-grad-text-warm: linear-gradient(96deg, #C9143C, #C25A00);
+  --vc-grad-text-onband: linear-gradient(96deg, #FF6E8E, #FFB03D);
+  --vc-grad-rule: linear-gradient(90deg, #FF6A00, #FFA51F);
+  --vc-grad-pop: linear-gradient(126deg, #500927 0%, #8C1033 44%, #7E3607 100%);
+  --vc-grad-amber: linear-gradient(150deg, #FFE7C4 0%, #FFD59B 100%);
+  --vc-grad-campaign: linear-gradient(152deg, #170D14 0%, #2C1020 55%, #3A1409 100%);
+
+  /* light only — never a text background */
+  --vc-bloom-rose: rgba(255, 77, 109, 0.17);
+  --vc-bloom-amber: rgba(255, 158, 0, 0.16);
+
+  /* ---- elevation: warm, never grey --------------------------- */
+  --vc-sh-card: 0 18px 40px -24px rgba(23, 17, 20, 0.28);
+  --vc-sh-cta: 0 14px 30px -8px rgba(168, 18, 58, 0.48);
+  --vc-sh-cta-hi: 0 22px 44px -10px rgba(168, 18, 58, 0.58);
+  --vc-sh-onband: 0 20px 44px -14px rgba(40, 3, 16, 0.50);
+  --vc-sh-ink: 0 40px 84px -34px rgba(30, 18, 25, 0.62);
+
+  /* ---- type -------------------------------------------------- */
+  --vc-display: 'Outfit', system-ui, sans-serif;
+  --vc-text: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --vc-scripture: 'Newsreader', 'Iowan Old Style', Georgia, serif; /* V9 */
+
+  /* ---- measure ----------------------------------------------- */
+  --vc-max: 1240px;
+  --vc-edge: max(var(--vc-gutter), calc((100vw - 1240px) / 2 + var(--vc-gutter)));
+  --vc-rail: max(13px, calc(var(--vc-edge) - 36px));
+  --vc-gutter: 40px;
+  --vc-pad: clamp(64px, 8vw, 120px);
+  --vc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ==========================================================
+     IMAGE ASSETS — THE ONLY BLOCK YOU EDIT WHEN ART CHANGES
+     Server:  /var/discourse/shared/standalone/uploads/custom-images/
+     Public:  https://community.victoriouschristians.com/custom-images/
+     ========================================================== */
+  --vc-plate-01: url("/custom-images/vc-plate-01.png"); /* believers at the table */
+  --vc-plate-02: url("/custom-images/vc-plate-02.png"); /* alone with the Word    */
+  --vc-plate-03: url("/custom-images/vc-plate-03.jpg"); /* open Bible             */
+  /* ==========================================================
+     V11 — DESIGN SYSTEM TOKENS
+     The rest of the Claude Design token sheet (design-system/project/
+     tokens.json), so the whole system ships inside this component.
+     Nothing references these yet; the next redesign builds on them.
+     Same scope as the block above: landing pages only, never :root.
+     ========================================================== */
+
+  /* ---- colour ---- */
+  --vc-peach-1: #fff7f0; // First stop of the peach surface gradient behind 'Modern Christianity is drowning in vagueness' (168deg, 0%).
+  --vc-peach-2: #ffeddc; // Middle stop of the peach surface (58%).
+  --vc-peach-3: #ffe3d0; // Last stop of the peach surface (100%). Measure peach-band text against this, the darkest stop.
+  --vc-rose-1: #fbf4f6; // Top of the rose surface behind 'Iron sharpens iron' (180deg, 0%).
+  --vc-rose-2: #f7eff2; // Bottom of the rose surface (100%).
+  --vc-pop-1: #710d3c; // Deep sunset band (Christian singles), 126deg start. White text 11.5:1.
+  --vc-pop-2: #b21540; // Deep sunset band, 44% stop. White text 6.8:1.
+  --vc-pop-3: #a8480a; // Deep sunset band, end stop. White 5.8:1. FAILS for vc-amber-pale (4.38:1) — see that token.
+  --vc-inkcard-1: #1e1219; // Ink card (the canon card) 158deg start.
+  --vc-inkcard-2: #2a121d; // Ink card 52% stop.
+  --vc-inkcard-3: #35180f; // Ink card end stop. Measure ink-card text against this, the lightest stop.
+  --vc-campaign-1: #170d14; // Scripture Campaign module 152deg start.
+  --vc-campaign-2: #2c1020; // Scripture Campaign module 55% stop.
+  --vc-campaign-3: #3a1409; // Scripture Campaign module end stop; measure module text here.
+  --vc-ambercard-1: #ffe7c4; // Bible trivia module 150deg start; also the text colour of the solid tag.
+  --vc-ambercard-2: #ffd59b; // Bible trivia module end stop; measure trivia text here.
+  --vc-remember-1: #fff4e9; // 'It remembers, too' note, 120deg start.
+  --vc-remember-2: #ffe9da; // 'It remembers, too' note, end stop.
+  --vc-beat-ink: #170b11; // Ground of the 'measure' beat card (ten dimensions) in the singles section.
+  --vc-plate-fill: #2a1a20; // Colour a photograph slot shows before its plate lazy-loads.
+  --vc-pcard-fill: #2a1220; // Ground of the hero profile card behind its photograph (V9; the card is cut in V10).
+  --vc-scrim: #0a0508; // Figure scrims: this colour from 80% at the foot to 6% at 58% height, so captions read on any plate.
+  --vc-remember-text: #4a3c40; // Text inside the 'It remembers, too' note. 8.9:1 on vc-remember-2.
+  --vc-beat-light-ink: #17070d; // h3 in the light beat card ('Nobody here swipes').
+  --vc-beat-light-body: #55424a; // Body in the light beat card. 9.3:1 on white.
+  --vc-trivia-ink: #2b1508; // Trivia module headline; solid tag fill; tag borders and tints at 10–22%.
+  --vc-trivia-body: #57331b; // Trivia module body. 8.1:1 on vc-ambercard-2.
+  --vc-trivia-eyebrow: #9c3f00; // Trivia module kicker ('Know it cold'). 4.9:1 on vc-ambercard-2.
+  --vc-check-ink: #2a120a; // The ✓ glyph on the amber check disc inside the ink card. 9.7:1 on vc-amber-2.
+  --vc-red-hover: #c9184a; // Text colour of the line button and Log In pill on hover. 5.7:1 on white.
+  --vc-red-bright: #e01a46; // Start of the gradient-text highlight (.hl) and of the 67/33 weight bar.
+  --vc-orange-bright: #e06a00; // End of the gradient-text highlight (.hl).
+  --vc-orange-hot: #ff6a00; // Start of the eyebrow/wordmark rule gradient and of the founding dot.
+  --vc-amber: #ffa51f; // The accent on dark: eyebrows on the dark band, the ink-card label, Scripture-side labels, the foot's bold, the focus ring's outer band, the answer's left rule at 40–62%. 9.8:1 on vc-dark.
+  --vc-amber-2: #ffb03d; // End of the rule gradient; middle stop of the meter fill; NT canon-bar top; the amber check disc. Never text.
+  --vc-plum-deep: #8a1552; // End stop of the hero card's gradient ring (V9).
+  --vc-onband-text: #cfc3ca; // Body on vc-dark: the cost paragraph, the foot, the canon legend. 11.3:1.
+  --vc-onband-soft: #c9bbc2; // Secondary text on dark: pair notes, meter label and note, the ink beat's body. 10.5:1 on vc-dark.
+  --vc-onband-mute: #a79ba2; // Muted labels on dark: 'The world talks', meter legend, weight legend, the canon readout at rest. 7.2:1 on vc-dark, 6.1:1 on vc-inkcard-3.
+  --vc-world: #bdb2b8; // The world's line at rest (no JS). 9.4:1 on vc-dark.
+  --vc-world-heard: #efe4ea; // The world's line the moment it is read, before the answer arrives (JS on).
+  --vc-world-dim: #9f939a; // The world's line after Scripture answers. 6.6:1 on vc-dark — dims, never disappears.
+  --vc-world-feature: #f0e4e9; // 'Judge not' at rest in the featured pair.
+  --vc-world-feature-dim: #d9cbd2; // 'Judge not' after the answer arrives.
+  --vc-campaign-text: #dccfd6; // Body inside the Scripture Campaign module. 10.9:1 on vc-campaign-3.
+  --vc-steps-text: #fff0e4; // The three pace steps on the glass beat. 5.2:1 on vc-pop-3.
+  --vc-amber-soft: #ffc178; // Warm highlight on dark: meter 'now' reading, legend .on, the canon readout when a book is named, the ink beat's kick, figure kickers, feature references. 12.1:1 on vc-dark.
+  --vc-amber-ref: #ffb066; // Scripture references on the dark band (John 14:6). 10.7:1.
+  --vc-amber-pale: #ffd9a8; // Eyebrow and the glass beat's kick on the sunset band. FAILS 4.5:1 on vc-pop-3 (4.38:1); passes on vc-pop-2 (5.1:1). Kept exact from V9 — V10 should place this text over the band's plum half or use white.
+  --vc-amber-label: #ffd09a; // The featured pair's world-side label ('The most weaponized verse'). 13.6:1.
+  --vc-meter-tip: #ffe0a8; // Brightest stop of the light-meter fill.
+
+  /* ---- gradients ---- */
+  --vc-grad-remember: linear-gradient(120deg, #FFF4E9, #FFE9DA); // The 'It remembers, too' note.
+  --vc-grad-feature: linear-gradient(112deg, rgba(255,165,31,0.16), rgba(216,27,69,0.16)); // The featured pair's fill over vc-dark.
+  --vc-grad-meter: linear-gradient(90deg, #C2540B, #FFB03D 62%, #FFE0A8); // The light meter's fill, dark to bright left to right.
+  --vc-grad-weight: linear-gradient(90deg, #E01A46, #FFB03D); // The faith share (67%) of the weight bar.
+  --vc-grad-dot: linear-gradient(135deg, #FFA51F, #FF6A00); // The bedrock pill's dot; the founding dot reverses it (#FF6A00 → #D81B45).
+  --vc-grad-check-onink: linear-gradient(135deg, #FF7A4D, #FFB03D); // Check discs on the ink card, with vc-check-ink for the glyph.
+  --vc-grad-ring: linear-gradient(150deg, #FFA51F, #E01A46 48%, #8A1552); // The hero card's 2px ring (V9).
+  --vc-grad-canon-ot: linear-gradient(180deg, #FF5C7E, #B0143C); // Old Testament canon bars, alpha rising .55 → 1 across the 39.
+  --vc-grad-canon-nt: linear-gradient(180deg, #FFB03D, #C25A00); // New Testament canon bars, alpha rising .55 → 1 across the 27.
+
+  /* ---- elevation ---- */
+  --vc-sh-fig: 0 40px 80px -34px rgba(70, 20, 10, 0.46); // The charge figure; body figure rgba(60,14,34,.44); singles figure 0 44px 88px -30px rgba(40,3,16,.62).
+  --vc-sh-beat: 0 30px 66px -30px rgba(40, 3, 16, 0.5); // The light beat card; the ink beat runs rgba(20,2,10,.66).
+  --vc-sh-pill: 0 14px 30px -14px rgba(23, 17, 20, 0.6); // The bedrock pill; the founding pill runs 0 14px 30px -16px rgba(168,18,58,.4).
+  --vc-sh-header: 0 1px 0 rgba(23, 17, 20, 0.08), 0 10px 30px -18px rgba(23, 17, 20, 0.30); // The frosted header once scrolled. None at the top of the page.
+  --vc-sh-joinbar: 0 -14px 34px -18px rgba(23, 17, 20, 0.35); // The phone join bar, cast upward.
+  --vc-sh-modal: 0 50px 110px -30px rgba(168, 18, 58, 0.5); // The 'How it works' dialog.
+  --vc-sh-focus: 0 0 0 6px #171114, 0 0 0 9px #FFA51F; // The focus ring's two bands, under a 2px white outline offset 2px. Reads on every surface.
+
+  /* ---- radii ---- */
+  --vc-radius-pill: 100px; // Buttons, tags, pills, the meter track, the weight bar, the header auth buttons.
+  --vc-radius-ring: 32px; // The hero card's gradient ring (V9).
+  --vc-radius-pcard: 30px; // The hero card inside its ring (V9).
+  --vc-radius-card: 28px; // The ink card and the modal dialog.
+  --vc-radius-fig: 26px; // Photograph figures and the module cards.
+  --vc-radius-beat: 24px; // The three beat cards.
+  --vc-radius-panel: 20px; // Quote pairs and the light-meter panel.
+  --vc-radius-note: 18px; // The 'It remembers, too' note.
+  --vc-radius-step: 15px; // The modal's numbered step tiles (48px squares).
+  --vc-radius-bar: 4px; // Canon bars (3px on a phone).
+  --vc-radius-swatch: 3px; // Legend swatches.
+  --vc-radius-rule: 2px; // The eyebrow rule, the wordmark rule, the tick.
+
+  /* ---- spacing ---- */
+  --vc-gutter-tablet: 26px; // Page inset from 1000px down to 701px.
+  --vc-gutter-phone: 18px; // Page inset at 700px and below — the entire inset a phone gets.
+  --vc-pad-max: 120px; // Section vertical padding ceiling (clamp(64px, 8vw, 120px)). The cost runs 126px, 'Come and see' 146px.
+  --vc-pad-min: 64px; // Section vertical padding floor.
+  --vc-card-pad: 40px; // Card padding ceiling: ink card, modules (clamp(26px, 3.2vw, 40px)); beats 34px.
+  --vc-card-pad-phone: 18px; // Card horizontal padding at 700px and below (24px vertical).
+  --vc-column-gap: 64px; // Gap between a section's two columns (clamp(34px, 5vw, 66px)); hero 38–64px.
+  --vc-stack: 24px; // Paragraph after a headline; lede after a headline; the paragraph after the cost and final headlines.
+  --vc-stack-sm: 18px; // The turn after its paragraph; a card paragraph after its h3.
+  --vc-eyebrow-gap: 20px; // Eyebrow to headline (18px on the dark band).
+  --vc-cta-gap: 12px; // Between buttons in a group; group sits 26–36px under the copy.
+  --vc-pair-gap: 18px; // Between quote pairs (clamp(12px, 1.6vw, 18px)).
+  --vc-module-gap: 26px; // Between the two modules (clamp(18px, 2.4vw, 26px)).
+  --vc-beat-gap: 24px; // Between the three beats (clamp(16px, 2.2vw, 24px)).
+  --vc-canon-gap: 6px; // Between the 66 canon bars (4px on a phone).
+  --vc-btn-pad-y: 17px; // Button vertical padding (19px in the final section, 12px in the join bar).
+  --vc-btn-pad-x: 34px; // Button horizontal padding (42px in the final section, 22px in the join bar).
+  --vc-tap-min: 44px; // Minimum tap target; every button and the canon bars on a phone meet it.
+
+  /* ---- measure ---- */
+  --vc-max-narrow: 920px; // The cost and 'Come and see' containers.
+  --vc-hero-copy-max: 660px; // The hero copy column.
+  --vc-modal-max: 680px; // The 'How it works' dialog.
+  --vc-measure-p: 56ch; // Body copy measure (hero 49ch, charge 54ch, final 52ch).
+  --vc-measure-h2: 20ch; // Section headline measure (charge 17ch, singles 18ch, dark band 24ch).
+  --vc-measure-lede: 44ch; // The singles lede.
+  --vc-measure-turn: 34ch; // The turn sentence.
+
+  /* ---- sizes ---- */
+  --vc-rule-w: 30px; // Eyebrow rule width (wordmark 32px, tick 76px).
+  --vc-rule-h: 3px; // Rule height: eyebrow, wordmark, tick.
+  --vc-canon-bar-h: 28px; // Canon bar height (20px on a phone); grid is 11 columns.
+  --vc-meter-h: 12px; // Light-meter track and weight-bar height.
+  --vc-check-dot: 25px; // Check disc diameter.
+  --vc-step-dot: 24px; // Pace step numeral disc.
+  --vc-modal-step: 48px; // Modal step tile (radius vc-radius-step).
+  --vc-dot: 9px; // The bedrock pill's dot (founding 8px), with a 4px halo at 16–22%.
+
+  /* ---- type styles: size / leading / weight / tracking ---- */
+  --vc-h1-size: 5rem; --vc-h1-leading: 0.97; --vc-h1-weight: 900; --vc-h1-tracking: -0.043em;
+  --vc-h2-size: 3.5rem; --vc-h2-leading: 1.02; --vc-h2-weight: 900; --vc-h2-tracking: -0.04em;
+  --vc-h2-xl-size: 4rem; --vc-h2-xl-leading: 1; --vc-h2-xl-weight: 900; --vc-h2-xl-tracking: -0.04em;
+  --vc-h2-pop-size: 4.5rem; --vc-h2-pop-leading: 0.98; --vc-h2-pop-weight: 900; --vc-h2-pop-tracking: -0.043em;
+  --vc-h2-cost-size: 3.5rem; --vc-h2-cost-leading: 1.04; --vc-h2-cost-weight: 900; --vc-h2-cost-tracking: -0.04em;
+  --vc-h2-final-size: 5.6rem; --vc-h2-final-leading: 0.96; --vc-h2-final-weight: 900; --vc-h2-final-tracking: -0.046em;
+  --vc-h3-size: 1.9rem; --vc-h3-leading: 1.08; --vc-h3-weight: 900; --vc-h3-tracking: -0.032em;
+  --vc-inkcard-title-size: 2.5rem; --vc-inkcard-title-leading: 1.05; --vc-inkcard-title-weight: 900; --vc-inkcard-title-tracking: -0.038em;
+  --vc-modal-title-size: 2.6rem; --vc-modal-title-leading: 1.03; --vc-modal-title-weight: 900; --vc-modal-title-tracking: -0.038em;
+  --vc-turn-size: 1.6rem; --vc-turn-leading: 1.32; --vc-turn-weight: 700; --vc-turn-tracking: -0.022em;
+  --vc-world-size: 1.24rem; --vc-world-leading: 1.4; --vc-world-weight: 400; --vc-world-tracking: normal;
+  --vc-world-feature-size: 1.5rem; --vc-world-feature-leading: 1.34; --vc-world-feature-weight: 400; --vc-world-feature-tracking: normal;
+  --vc-beat-kick-size: 1.04rem; --vc-beat-kick-leading: 1.34; --vc-beat-kick-weight: 800; --vc-beat-kick-tracking: normal;
+  --vc-fig-line-size: 1.16rem; --vc-fig-line-leading: 1.34; --vc-fig-line-weight: 700; --vc-fig-line-tracking: normal;
+  --vc-btn-size: 1.05rem; --vc-btn-leading: 1.2; --vc-btn-weight: 700; --vc-btn-tracking: normal;
+  --vc-pill-size: 0.95rem; --vc-pill-leading: 1.2; --vc-pill-weight: 700; --vc-pill-tracking: normal;
+  --vc-wordmark-size: 1rem; --vc-wordmark-leading: 1.2; --vc-wordmark-weight: 800; --vc-wordmark-tracking: 0.13em;
+  --vc-tag-size: 0.86rem; --vc-tag-leading: 1.2; --vc-tag-weight: 700; --vc-tag-tracking: normal;
+  --vc-foot-size: 0.9rem; --vc-foot-leading: 1.4; --vc-foot-weight: 700; --vc-foot-tracking: 0.06em;
+  --vc-meter-now-size: 0.95rem; --vc-meter-now-leading: 1.3; --vc-meter-now-weight: 700; --vc-meter-now-tracking: normal;
+  --vc-canon-read-size: 0.92rem; --vc-canon-read-leading: 1.5; --vc-canon-read-weight: 600; --vc-canon-read-tracking: 0.01em;
+  --vc-p-size: 1.16rem; --vc-p-leading: 1.7; --vc-p-weight: 400; --vc-p-tracking: normal;
+  --vc-lede-size: 1.24rem; --vc-lede-leading: 1.6; --vc-lede-weight: 400; --vc-lede-tracking: normal;
+  --vc-card-p-size: 1.08rem; --vc-card-p-leading: 1.66; --vc-card-p-weight: 400; --vc-card-p-tracking: normal;
+  --vc-beat-p-size: 1rem; --vc-beat-p-leading: 1.62; --vc-beat-p-weight: 400; --vc-beat-p-tracking: normal;
+  --vc-check-size: 1.02rem; --vc-check-leading: 1.45; --vc-check-weight: 600; --vc-check-tracking: normal;
+  --vc-hero-note-size: 0.94rem; --vc-hero-note-leading: 1.55; --vc-hero-note-weight: 400; --vc-hero-note-tracking: normal;
+  --vc-note-size: 0.9rem; --vc-note-leading: 1.55; --vc-note-weight: 400; --vc-note-tracking: normal;
+  --vc-legend-size: 0.9rem; --vc-legend-leading: 1.4; --vc-legend-weight: 600; --vc-legend-tracking: normal;
+  --vc-reference-size: 0.86rem; --vc-reference-leading: 1.4; --vc-reference-weight: 700; --vc-reference-tracking: 0.04em;
+  --vc-founding-size: 0.85rem; --vc-founding-leading: 1.3; --vc-founding-weight: 700; --vc-founding-tracking: normal;
+  --vc-eyebrow-size: 0.78rem; --vc-eyebrow-leading: 1.3; --vc-eyebrow-weight: 700; --vc-eyebrow-tracking: 0.2em;
+  --vc-kicker-size: 0.72rem; --vc-kicker-leading: 1.3; --vc-kicker-weight: 700; --vc-kicker-tracking: 0.2em;
+  --vc-label-size: 0.68rem; --vc-label-leading: 1.3; --vc-label-weight: 700; --vc-label-tracking: 0.18em;
+  --vc-scripture-size: 1.56rem; --vc-scripture-leading: 1.3; --vc-scripture-weight: 500; --vc-scripture-tracking: -0.012em;
+  --vc-scripture-feature-size: 1.92rem; --vc-scripture-feature-leading: 1.22; --vc-scripture-feature-weight: 600; --vc-scripture-feature-tracking: -0.018em;
+  --vc-scripture-verse-size: 1.05rem; --vc-scripture-verse-leading: 1.4; --vc-scripture-verse-weight: 400; --vc-scripture-verse-tracking: normal;
+}
+
+/* ==========================================================
+   2. LANDING TAKEOVER  (companion-only, VB stays stock)
+   ========================================================== */
+body:has(.vc-landing-wrapper) {
+  background: var(--vc-white) !important;
+
+  #main-outlet-wrapper { display: none !important; }
+
+  /* V9 — HEADER. Frosted by default so it stays legible over every
+     section; the initializer adds html.vc-at-top while the page is at
+     the top, and only then does it go transparent over the hero.      */
+  .d-header-wrap {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .d-header {
+    background: rgba(255, 253, 252, 0.88) !important;
+    -webkit-backdrop-filter: saturate(1.5) blur(16px);
+    backdrop-filter: saturate(1.5) blur(16px);
+    box-shadow: 0 1px 0 rgba(23, 17, 20, 0.08), 0 10px 30px -18px rgba(23, 17, 20, 0.30) !important;
+    border: none !important;
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+  }
+  /* a guest on the landing is not searching a forum yet */
+  .d-header .floating-search-input-wrapper { display: none !important; }
+
+  .d-header .auth-buttons .btn {
+    border-radius: 100px; font-family: var(--vc-display); font-weight: 700;
+    padding: 8px 18px; border: 1.5px solid transparent;
+    transition: transform 0.3s var(--vc-ease), box-shadow 0.3s ease, border-color 0.3s ease;
+    .d-button-label, .d-icon { color: inherit !important; }
+  }
+  .d-header .auth-buttons .sign-up-button {
+    background: var(--vc-grad) !important; color: #fff !important;
+    box-shadow: 0 10px 22px -10px rgba(168, 18, 58, 0.55);
+    &:hover { transform: translateY(-2px); }
+  }
+  .d-header .auth-buttons .login-button {
+    background: #fff !important; color: var(--vc-ink) !important;
+    border-color: rgba(23, 17, 20, 0.20);
+    &:hover { border-color: var(--vc-red); color: #C9184A !important; }
+  }
+
+  /* ---- THE MOBILE FULL-BLEED FIX ----------------------------
+     Discourse pads #main-outlet and .contents on small screens,
+     and the VB wrapper adds its own. The landing owns its
+     horizontal space completely; every inset it needs comes from
+     --vc-gutter and nothing else.                              */
+  #main-outlet,
+  .above-main-container-outlet,
+  .below-site-header-outlet,
+  .custom-banner-outlet {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+}
+
+/* ==========================================================
+   3. VB WRAPPER RESETS
+   ========================================================== */
+.versatile-banner-component {
+  background: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+body:has(.vc-landing-wrapper) .banner-box {
+  background: transparent !important;
+  background-image: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+body:has(.vc-landing-wrapper) .banner-box .section-header { padding: 0 !important; margin: 0 !important; }
+/* V9 — stock VB centres every .banner-box h1/h2/h3. `inherit` hands the
+   decision back to the block: left by default, centre in cost + final. */
+body:has(.vc-landing-wrapper) .banner-box :is(h1, h2, h3, h4) { text-align: inherit; }
+body:has(.vc-landing-wrapper) .banner-box .container,
+body:has(.vc-landing-wrapper) .banner-box .contents {
+  max-width: none !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ==========================================================
+   4. THE LANDING
+   ========================================================== */
+.vc-landing-wrapper {
+  position: relative;
+  width: 100%;
+  background: var(--vc-white);
+  color: var(--vc-ink);
+  font-family: var(--vc-text);
+  line-height: 1.6;
+  text-align: left;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+
+  * { box-sizing: border-box; }
+
+  h1, h2, h3, h4 {
+    font-family: var(--vc-display);
+    color: var(--vc-ink) !important;   /* beats .banner-box h* */
+    margin: 0;
+    letter-spacing: -0.026em;
+    line-height: 1.05;
+  }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  ::selection { background: rgba(216, 27, 69, 0.20); color: var(--vc-ink); }
+
+  /* ---- structure ---------------------------------------------- */
+  .vc-container { max-width: var(--vc-max); margin: 0 auto; padding: 0 var(--vc-gutter); position: relative; z-index: 2; }
+  .vc-sec { padding: var(--vc-pad) 0; position: relative; background: var(--vc-white); }
+  .vc-final { position: relative; }
+
+  .vc-sec--charge {
+    background: var(--vc-peach);
+    border-top: 1px solid rgba(23, 17, 20, 0.08);
+    overflow: hidden;
+    &::after {
+      content: ""; position: absolute; bottom: -32%; left: -8%; width: 620px; height: 560px;
+      z-index: 0; pointer-events: none; filter: blur(54px);
+      background: radial-gradient(circle, rgba(216, 27, 69, 0.13), transparent 64%);
+    }
+  }
+  .vc-sec--dusk { background: var(--vc-dusk); border-top: 1px solid rgba(23, 17, 20, 0.06); }
+  .vc-sec--rose {
+    background: var(--vc-rose);
+    border-top: 1px solid rgba(23, 17, 20, 0.08);
+    border-bottom: 1px solid rgba(23, 17, 20, 0.08);
+  }
+  .vc-sec--dark { background: var(--vc-dark-1); color: #fff; overflow: hidden; }
+  .vc-cost.vc-sec--dark { background: var(--vc-dark-2); }
+  .vc-sec--pop { background: var(--vc-grad-pop); color: #fff; overflow: hidden; }
+
+  /* grain — keeps a big gradient from banding and reading cheap */
+  .vc-sec--pop::after {
+    content: ""; position: absolute; inset: 0; opacity: 0.20; pointer-events: none; z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  .vc-glow { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; }
+  .vc-glow--tr { top: -18%; right: -12%; width: 660px; height: 640px; background: radial-gradient(circle, rgba(255, 138, 0, 0.18), transparent 62%); filter: blur(62px); }
+  .vc-glow--bl { bottom: -24%; left: -10%; width: 580px; height: 560px; background: radial-gradient(circle, rgba(216, 27, 69, 0.20), transparent 64%); filter: blur(62px); }
+  .vc-glow--band { top: -30%; left: 44%; width: 74vw; height: 640px; background: radial-gradient(ellipse, rgba(255, 196, 130, 0.26), transparent 62%); filter: blur(62px); }
+  .vc-glow--cost { top: -26%; left: 50%; transform: translateX(-50%); width: 80vw; height: 600px; background: radial-gradient(ellipse, rgba(255, 138, 0, 0.16), transparent 64%); filter: blur(64px); }
+  .vc-glow--final {
+    top: -30%; left: 50%; transform: translateX(-50%); width: 104vw; height: 820px; filter: blur(56px);
+    background: radial-gradient(ellipse at center, rgba(255, 176, 61, 0.34), rgba(255, 92, 126, 0.22) 46%, transparent 72%);
+  }
+
+  /* ==========================================================
+     THE WAY (V15)
+     One road for the whole page, on the same vertical as the copy's
+     left edge, so every eyebrow rule reads as a marker branching off
+     it. It narrows as it descends. The lit part is how far the reader
+     has walked; the initializer writes --vc-walk on scroll.
+     ========================================================== */
+  .vc-way {
+    position: absolute; z-index: 6; pointer-events: none;
+    left: var(--vc-rail); width: 3px; border-radius: 2px;
+    top: var(--vc-way-top, 0px); bottom: var(--vc-way-bottom, 0px);
+    background: linear-gradient(to bottom, rgba(214, 158, 120, 0.26), rgba(214, 158, 120, 0.13));
+    i {
+      position: absolute; inset: 0 0 auto 0; display: block; border-radius: 2px;
+      height: calc(var(--vc-walk, 0) * 100%);
+      background: linear-gradient(to bottom, #FF6A00, #FFA51F 60%, #FFD9A8);
+      box-shadow: 0 0 20px 2px rgba(255, 138, 0, 0.45);
+    }
+    /* the light you are carrying, at the head of the walk */
+    i::after {
+      content: ""; position: absolute; left: 50%; bottom: 0;
+      width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%, 50%);
+      background: radial-gradient(circle, #FFF3E2 0%, #FFA51F 52%, rgba(255, 138, 0, 0) 74%);
+      box-shadow: 0 0 20px 5px rgba(255, 138, 0, 0.5);
+    }
+  }
+
+  /* the waypoints: the same arch as the hero gate, growing as you
+     descend, so the closing gate is the end of a series             */
+  .vc-gatemark {
+    position: absolute; top: 10px; left: var(--vc-rail); z-index: 7;
+    width: var(--m, 22px); transform: translateX(-50%);
+    color: rgba(190, 130, 100, 0.34); pointer-events: none;
+    transition: color 0.6s ease;
+    svg { display: block; width: 100%; height: auto; overflow: visible; }
+    &[data-mark="1"] { --m: 20px; }
+    &[data-mark="2"] { --m: 22px; }
+    &[data-mark="3"] { --m: 24px; }
+    &[data-mark="4"] { --m: 26px; }
+    &[data-mark="5"] { --m: 29px; }
+    &[data-mark="6"] { --m: 32px; }
+  }
+  .vc-sec--dark .vc-gatemark,
+  .vc-sec--pop .vc-gatemark { color: rgba(255, 209, 168, 0.30); }
+  .vc-sec.vc-seen .vc-gatemark { color: #FFA51F; filter: drop-shadow(0 0 9px rgba(255, 138, 0, 0.55)); }
+
+  /* the road stands up, at the end */
+  /* the arrival runs edge to edge, the way the hero plate does — the
+     page opens out at the end instead of closing down                */
+  /* THE ARRIVAL (V17)
+     It sits flush against the dark block above it — no gap, no pale
+     strip. Its top feathers from that same near-black, so the cost
+     section and the gate are one continuous darkness; its bottom
+     feathers to white, so the light from the door pours into the
+     closing frame. Dark, then the door, then light.               */
+  .vc-arrive {
+    position: relative; overflow: hidden; border-radius: 0;
+    width: 100vw; margin-left: calc(50% - 50vw);
+    margin-top: calc(var(--vc-final-pad) * -1);
+    margin-bottom: clamp(34px, 4.4vw, 60px);
+    aspect-ratio: 16 / 7; max-height: 700px;
+    background: var(--vc-dark-2);
+  }
+  .vc-arrive::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(to bottom,
+      var(--vc-dark-2) 0%,
+      rgba(10, 6, 10, 0.72) 6%,
+      rgba(10, 6, 10, 0) 24%,
+      rgba(255, 255, 255, 0) 70%,
+      rgba(255, 255, 255, 0.96) 97%);
+  }
+  .vc-arrive-img {
+    position: absolute; inset: 0; display: block;
+    background-repeat: no-repeat; background-size: cover; background-position: 50% 34%;
+  }
+
+  /* ---- the eyebrow: an orange rule, then the label ------------- */
+  .vc-eyebrow {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    font-weight: 700; font-size: 0.78rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--vc-orange-warm);
+    &::before { content: ""; width: 30px; height: 3px; border-radius: 2px; background: var(--vc-grad-rule); flex: 0 0 auto; }
+    span { white-space: nowrap; }
+  }
+  .vc-eyebrow--onband { color: #FFA51F; margin-bottom: 18px; }
+  .vc-eyebrow--plum { color: #FFD9A8; }
+  .vc-eyebrow--plumink { color: var(--vc-plum-ink); }
+
+  /* the wordmark owns the first line of the page */
+  .vc-wordmark {
+    display: flex; align-items: center; gap: 13px;
+    margin-bottom: clamp(26px, 3.4vw, 44px);
+    &::before { content: ""; width: 32px; height: 3px; border-radius: 2px; background: var(--vc-grad-rule); flex: 0 0 auto; }
+    .nm {
+      font-family: var(--vc-display); font-weight: 800;
+      font-size: clamp(0.86rem, 2.4vw, 1rem); letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--vc-ink);
+    }
+  }
+
+  /* ---- headings + copy ----------------------------------------- */
+  .vc-h1 {
+    font-weight: 900; font-size: clamp(2.6rem, 5.5vw, 5rem);
+    line-height: 0.97; letter-spacing: -0.028em; text-wrap: balance;
+  }
+  .vc-h2 { font-weight: 900; font-size: clamp(2.05rem, 4.6vw, 3.5rem); line-height: 1.04; letter-spacing: -0.026em; max-width: 20ch; text-wrap: balance; }
+  .vc-h2--xl { font-size: clamp(2.15rem, 5vw, 4rem); line-height: 1.0; max-width: 17ch; }
+  .vc-h2--onband { color: #fff !important; max-width: 24ch; margin-bottom: clamp(30px, 4vw, 48px); }
+  .vc-h2--pop {
+    color: #fff !important; font-size: clamp(2.3rem, 5.6vw, 4.5rem); line-height: 0.98;
+    letter-spacing: -0.028em; max-width: 18ch; text-shadow: 0 4px 26px rgba(50, 4, 20, 0.35);
+  }
+  .vc-h3 { font-weight: 900; font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.1; letter-spacing: -0.022em; }
+  .vc-p {
+    font-size: clamp(1.04rem, 2.6vw, 1.16rem); line-height: 1.7;
+    color: var(--vc-body) !important; max-width: 56ch; margin-top: 24px; text-wrap: pretty;
+  }
+  .vc-p--short { max-width: 54ch; color: var(--vc-body-warm) !important; }
+  .vc-turn {
+    margin-top: 18px; font-family: var(--vc-display); font-weight: 700;
+    font-size: clamp(1.2rem, 3vw, 1.6rem); line-height: 1.32; letter-spacing: -0.022em;
+    color: var(--vc-ink) !important; max-width: 34ch; text-wrap: balance;
+  }
+  .vc-lede {
+    margin-top: 24px; font-size: clamp(1.08rem, 2.7vw, 1.24rem); line-height: 1.6;
+    color: #fff !important; max-width: 44ch; text-wrap: pretty;
+    text-shadow: 0 2px 14px rgba(50, 4, 20, 0.45);
+  }
+
+  .hl {
+    background: var(--vc-grad-text);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .vc-sec--charge .hl { background: var(--vc-grad-text-warm); -webkit-background-clip: text; background-clip: text; }
+  .hl--onband { background: var(--vc-grad-text-onband); -webkit-background-clip: text; background-clip: text; }
+
+  /* the black pill that closes the charge */
+  .vc-bedrock {
+    display: inline-flex; align-items: center; gap: 11px; margin-top: 24px;
+    padding: 11px 20px 11px 14px; border-radius: 100px; background: var(--vc-ink);
+    box-shadow: 0 14px 30px -14px rgba(23, 17, 20, 0.6);
+    font-family: var(--vc-display); font-weight: 700; font-size: 0.95rem; color: #fff;
+    .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; background: linear-gradient(135deg, #FFA51F, #FF6A00); box-shadow: 0 0 0 4px rgba(255, 165, 31, 0.22); }
+  }
+
+  /* ---- buttons -------------------------------------------------- */
+  .vc-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 17px 34px; border-radius: 100px; border: none;
+    font-family: var(--vc-display); font-weight: 700; font-size: 1.05rem;
+    cursor: pointer;
+    transition: transform 0.3s var(--vc-ease), box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+  }
+  .vc-btn--grad {
+    background: var(--vc-grad); color: #fff !important; box-shadow: var(--vc-sh-cta);
+    &:hover { transform: translateY(-3px); box-shadow: var(--vc-sh-cta-hi); }
+  }
+  .vc-btn--line {
+    background: #fff; color: var(--vc-ink) !important; border: 1.5px solid rgba(23, 17, 20, 0.20);
+    &:hover { transform: translateY(-3px); border-color: var(--vc-red); color: #C9184A !important; }
+  }
+  .vc-btn--white {
+    background: #fff; color: var(--vc-plum) !important; box-shadow: var(--vc-sh-onband);
+    &:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -16px rgba(40, 3, 16, 0.62); }
+  }
+  .vc-cta-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: clamp(26px, 3vw, 36px); }
+  .vc-cta-group--singles { margin-top: clamp(26px, 3vw, 36px); }
+
+  /* ---- figures: one plate treatment, four crops ---------------- */
+  .vc-fig {
+    position: relative; margin: 0; border-radius: 26px; overflow: hidden;
+    background-size: cover; background-repeat: no-repeat;
+    &::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+    figcaption {
+      position: absolute; left: 22px; right: 22px; bottom: 20px; z-index: 2;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .kk { font-weight: 700; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #FFC178; }
+    .ln { font-family: var(--vc-display); font-weight: 700; font-size: clamp(1rem, 2.4vw, 1.16rem); line-height: 1.34; color: #fff; }
+  }
+  .vc-fig--charge {
+    aspect-ratio: 4 / 4.6; background-image: var(--vc-plate-03); background-position: center 52%;
+    border: 1px solid var(--vc-line); box-shadow: 0 40px 80px -34px rgba(70, 20, 10, 0.46);
+    &::after { background: linear-gradient(to top, rgba(10, 5, 8, 0.80), rgba(10, 5, 8, 0.06) 58%); }
+  }
+  .vc-fig--body {
+    aspect-ratio: 16 / 11; background-image: var(--vc-plate-01); background-position: center 46%;
+    border: 1px solid var(--vc-line); box-shadow: 0 38px 76px -34px rgba(60, 14, 34, 0.44);
+    &::after { background: linear-gradient(to top, rgba(10, 5, 8, 0.66), rgba(10, 5, 8, 0.02) 62%); }
+  }
+  .vc-fig--singles {
+    aspect-ratio: 4 / 4.7; background-image: var(--vc-plate-02); background-position: center 40%;
+    border: 1px solid rgba(255, 255, 255, 0.24); box-shadow: 0 44px 88px -30px rgba(40, 3, 16, 0.62);
+    &::after { background: linear-gradient(to top, rgba(10, 5, 8, 0.74), rgba(10, 5, 8, 0.04) 56%); }
+  }
+
+  /* ==========================================================
+     §1 HERO
+     ========================================================== */
+  .vc-hero-copy .vc-p { margin-top: clamp(20px, 2.3vw, 28px); }
+  .vc-hero-note { margin-top: clamp(20px, 2.2vw, 26px); font-size: 0.94rem; line-height: 1.55; color: var(--vc-mute) !important; }
+
+  /* ---- THE HERO (V16) -----------------------------------------
+     One composition, not two objects. The plate is no longer a
+     column beside the copy: it is a layer behind the whole hero,
+     anchored to the top and right of the viewport and reaching far
+     enough left that its dark cliffs pass under the end of the
+     headline. Its left edge is a MASK, not a white wash, so it
+     dissolves into the page ground instead of stopping at a line.
+     --------------------------------------------------------- */
+  .vc-hero {
+    position: relative; overflow: hidden; background: var(--vc-white-warm);
+    min-height: clamp(560px, 86vh, 900px);
+    display: flex; align-items: center;
+    &::before {
+      content: ""; position: absolute; top: -220px; left: -200px; width: 820px; height: 700px;
+      z-index: 1; pointer-events: none; filter: blur(56px);
+      background: radial-gradient(ellipse at center, var(--vc-bloom-rose), transparent 62%);
+    }
+    /* the warm bloom sits BETWEEN the plate and the copy, so the two
+       are lit by the same light instead of merely abutting          */
+    &::after {
+      content: ""; position: absolute; top: 4%; left: 26%; width: 56%; height: 92%;
+      z-index: 1; pointer-events: none; filter: blur(70px);
+      background: radial-gradient(ellipse at 40% 50%, rgba(255, 158, 0, 0.20), rgba(255, 77, 109, 0.11) 46%, transparent 72%);
+    }
+  }
+
+  .vc-road {
+    position: absolute; top: 0; right: 0; bottom: 0; z-index: 0; margin: 0;
+    width: min(62vw, calc(100vw - 380px)); overflow: hidden;
+    border: 0; border-radius: 0; background: transparent;
+    /* the dissolve. Nearly nothing where the words are, whole where
+       the road is. */
+    --vc-fade: linear-gradient(to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.10) 18%,
+      rgba(0, 0, 0, 0.30) 29%,
+      rgba(0, 0, 0, 0.72) 38%,
+      rgba(0, 0, 0, 0.96) 46%,
+      rgb(0, 0, 0) 54%);
+    -webkit-mask-image: var(--vc-fade); mask-image: var(--vc-fade);
+  }
+  .vc-road-img {
+    position: absolute; inset: 0; display: block;
+    background-repeat: no-repeat; background-size: cover; background-position: 50% 16%;
+  }
+
+  .vc-road-cap {
+    position: absolute; right: 0; bottom: 0; left: auto; z-index: 2;
+    width: min(46%, 520px);
+    display: flex; flex-direction: column; gap: 6px;
+    padding: clamp(60px, 8vw, 110px) clamp(24px, 2.6vw, 38px) clamp(22px, 2.6vw, 34px) clamp(20px, 2.4vw, 34px);
+    background: linear-gradient(to top, rgba(6, 3, 5, 0.94) 4%, rgba(6, 3, 5, 0.72) 32%, rgba(6, 3, 5, 0.22) 62%, transparent 92%);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 24%);
+    mask-image: linear-gradient(to right, transparent, #000 24%);
+    .vs {
+      font-family: var(--vc-scripture); font-weight: 400; font-style: italic;
+      font-size: clamp(0.99rem, 1.2vw, 1.12rem); line-height: 1.38; color: #FFF6EA;
+      text-shadow: 0 1px 12px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
+    .rf { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.04em; color: #FFC178; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8); }
+  }
+
+  .vc-hero-copy {
+    position: relative; z-index: 3;
+    padding: clamp(40px, 5vw, 80px) clamp(34px, 4vw, 64px) clamp(40px, 5vw, 76px) var(--vc-edge);
+    width: 100%;
+    .vc-h1 { max-width: 11ch; }
+    .vc-p { max-width: 40ch; }
+    .vc-hero-note { max-width: 38ch; }
+  }
+
+  /* ==========================================================
+     §2a THE CHARGE
+     ========================================================== */
+  .vc-charge { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: clamp(34px, 5vw, 66px); align-items: center; }
+
+  /* ==========================================================
+     §2b THE WORLD TALKS → SCRIPTURE ANSWERS
+     The dark band is the page's contrast anchor. Each row states
+     the shrug in muted italic and the answer in white at greater
+     size — the hierarchy IS the argument.
+     ========================================================== */
+  .vc-pairs { display: flex; flex-direction: column; gap: clamp(12px, 1.6vw, 18px); }
+  .vc-pair {
+    display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(14px, 2vw, 30px);
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 20px; padding: clamp(18px, 2.2vw, 28px);
+  }
+  .vc-pair-side { display: flex; flex-direction: column; gap: 10px; }
+  .vc-pair-lbl { font-weight: 700; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .vc-pair-world {
+    .vc-pair-lbl { color: #A79BA2; }
+    .q { font-family: var(--vc-display); font-style: italic; font-size: clamp(1.05rem, 2.4vw, 1.24rem); line-height: 1.4; color: #BDB2B8; }
+    .nt { font-size: 0.9rem; line-height: 1.55; color: #C9BBC2; }
+  }
+  .vc-pair-word {
+    border-left: 2px solid rgba(255, 165, 31, 0.5); padding-left: clamp(16px, 2vw, 26px);
+    .vc-pair-lbl { color: #FFA51F; }
+    .a { font-family: var(--vc-display); font-weight: 600; font-size: clamp(1.1rem, 2.6vw, 1.4rem); line-height: 1.36; color: #fff; }
+    .r { font-weight: 700; font-size: 0.86rem; letter-spacing: 0.04em; color: #FFB066; }
+  }
+  /* the strongest pair available gets the emphasis */
+  .vc-pair--feature {
+    background: linear-gradient(112deg, rgba(255, 165, 31, 0.16), rgba(216, 27, 69, 0.16));
+    border-color: rgba(255, 165, 31, 0.44);
+    padding: clamp(20px, 2.4vw, 30px);
+    box-shadow: 0 26px 60px -30px rgba(255, 138, 0, 0.5);
+    .vc-pair-world {
+      .vc-pair-lbl { color: #FFD09A; }
+      .q { font-size: clamp(1.15rem, 2.8vw, 1.5rem); line-height: 1.34; color: #F0E4E9; }
+    }
+    .vc-pair-word {
+      border-left-color: rgba(255, 165, 31, 0.62);
+      .a { font-weight: 700; font-size: clamp(1.25rem, 3.2vw, 1.72rem); line-height: 1.28; letter-spacing: -0.02em; }
+      .r { font-size: 0.9rem; color: #FFC178; }
+    }
+  }
+
+  /* ==========================================================
+     §2c THE ANSWER — white section, dark ink card
+     ========================================================== */
+  .vc-answer { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(34px, 5vw, 68px); align-items: start; }
+  .vc-remember {
+    margin-top: 26px; padding: 20px 24px; border-radius: 18px;
+    background: linear-gradient(120deg, #FFF4E9, #FFE9DA);
+    border: 1px solid rgba(216, 27, 69, 0.14);
+    font-size: 1.03rem; line-height: 1.62; color: #4A3C40 !important; text-wrap: pretty;
+    b { font-family: var(--vc-display); font-weight: 800; color: var(--vc-ink); }
+  }
+  .vc-inkcard {
+    position: relative; overflow: hidden; border-radius: 28px;
+    background: var(--vc-ink-card); box-shadow: var(--vc-sh-ink);
+    padding: clamp(26px, 3.2vw, 40px);
+    &::before {
+      content: ""; position: absolute; top: -30%; right: -20%; width: 420px; height: 400px;
+      z-index: 0; pointer-events: none; filter: blur(46px);
+      background: radial-gradient(circle, rgba(255, 165, 31, 0.22), transparent 64%);
+    }
+    > * { position: relative; z-index: 1; }
+    .lbl { display: block; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #FFA51F; margin-bottom: 10px; }
+    .ttl {
+      font-family: var(--vc-display); font-weight: 900; font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+      letter-spacing: -0.026em; line-height: 1.07; color: #fff; margin-bottom: 26px;
+    }
+  }
+  /* 66 bars — 39 OT rose, 27 NT amber, deepening across each */
+  .vc-canon-bars {
+    display: grid; grid-template-columns: repeat(11, 1fr); gap: 6px;
+    i { display: block; height: 28px; border-radius: 4px; }
+    @for $n from 1 through 39 {
+      i:nth-child(#{$n}) {
+        $a: 0.55 + (($n - 1) / 38) * 0.45;
+        background: linear-gradient(180deg, rgba(255, 92, 126, $a), rgba(176, 20, 60, $a));
+      }
+    }
+    @for $n from 40 through 66 {
+      i:nth-child(#{$n}) {
+        $a: 0.55 + (($n - 40) / 26) * 0.45;
+        background: linear-gradient(180deg, rgba(255, 176, 61, $a), rgba(194, 90, 0, $a));
+      }
+    }
+  }
+  .vc-canon-legend {
+    display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 20px;
+    padding-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    span { display: flex; align-items: center; gap: 9px; font-weight: 600; font-size: 0.9rem; color: #CFC3CA; }
+    i { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; }
+    .ot i { background: linear-gradient(135deg, #FF5C7E, #B0143C); }
+    .nt i { background: linear-gradient(135deg, #FFB03D, #C25A00); }
+  }
+  .vc-checks {
+    margin: 28px 0 0; display: flex; flex-direction: column; gap: 14px;
+    li { display: flex; align-items: flex-start; gap: 13px; font-weight: 600; font-size: 1.02rem; line-height: 1.45; color: var(--vc-ink); }
+    .ck {
+      width: 25px; height: 25px; border-radius: 50%; flex: 0 0 auto; margin-top: 1px;
+      display: grid; place-items: center; font-size: 0.73rem; font-weight: 800; color: #fff; background: var(--vc-grad);
+    }
+  }
+  .vc-checks--onink {
+    margin-top: 24px;
+    li { color: #fff; }
+    .ck { background: linear-gradient(135deg, #FF7A4D, #FFB03D); color: #2A120A; }
+  }
+
+  /* ==========================================================
+     PRODUCT VIGNETTES (V12)
+     Drawn UI, not screenshots and not photographs. No member names,
+     no faces, no counts. "A member", "You", "Veritas" only.
+     ========================================================== */
+  .vc-vig {
+    position: relative; overflow: hidden; border-radius: var(--vc-radius-fig, 26px);
+    display: flex; flex-direction: column; gap: 12px;
+    padding: clamp(18px, 2.2vw, 26px);
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--vc-line);
+    box-shadow: var(--vc-sh-card);
+    p { margin: 0; text-wrap: pretty; }
+    em { font-style: italic; }
+  }
+  .vc-vig-bar {
+    display: flex; align-items: center; gap: 7px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--vc-line);
+    .lp { width: 8px; height: 8px; border-radius: 50%; background: rgba(23, 17, 20, 0.14); }
+    .sp { width: 9px; height: 9px; border-radius: 50%; background: var(--vc-grad); box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.16); }
+    .ttl {
+      margin-left: 4px; font-family: var(--vc-display); font-weight: 700;
+      font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--vc-mute);
+    }
+  }
+  .vc-vig-foot {
+    margin-top: auto; padding-top: 12px; border-top: 1px solid var(--vc-line);
+    .go { font-family: var(--vc-display); font-weight: 700; font-size: 0.92rem; color: var(--vc-orange); }
+  }
+
+  /* ---- the wall ------------------------------------------------ */
+  .vc-post {
+    display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+    .av {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(140deg, #F3D9C6, #E0AE96);
+      box-shadow: inset 0 0 0 1px rgba(23, 17, 20, 0.08);
+    }
+    .av--2 { background: linear-gradient(140deg, #D9DEEC, #ADB6CF); }
+    .bd { display: flex; flex-direction: column; gap: 5px; }
+    .who { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.02em; color: var(--vc-plum-ink); }
+    p { font-size: 0.97rem; line-height: 1.55; color: var(--vc-body); }
+    .rf { font-weight: 700; font-size: 0.8rem; letter-spacing: 0.04em; color: var(--vc-orange); }
+  }
+  .vc-post--reply {
+    margin-left: 22px; padding-left: 14px; border-left: 2px solid rgba(216, 27, 69, 0.18);
+  }
+
+  /* ---- Veritas: a conversation, on the sunset band -------------- */
+  .vc-vig--veritas {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.28);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    box-shadow: var(--vc-sh-onband);
+    .vc-vig-bar { border-bottom-color: rgba(255, 255, 255, 0.22); .ttl { color: #FFD9A8; } }
+    .vc-vig-foot { border-top-color: rgba(255, 255, 255, 0.22); .go { color: #FFD9A8; } }
+  }
+  .vc-turn-row {
+    display: flex; flex-direction: column; gap: 5px;
+    p {
+      padding: 12px 15px; border-radius: 16px; font-size: 0.97rem; line-height: 1.5;
+      max-width: 92%;
+    }
+    .who { font-weight: 700; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; }
+  }
+  .vc-turn-row--ai p {
+    border-bottom-left-radius: 5px; background: rgba(255, 255, 255, 0.95); color: #3E2630;
+  }
+  .vc-turn-row--you {
+    align-items: flex-end;
+    p { border-bottom-right-radius: 5px; background: rgba(23, 7, 14, 0.52); color: #FFF0E4; }
+    .who { color: #FFD9A8; }
+  }
+
+  /* ---- the exegesis engine -------------------------------------- */
+  .vc-vig--engine {
+    .who { display: block; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 7px; }
+    .vc-ask {
+      padding: 14px 16px; border-radius: 16px; background: #FBF4F6; border: 1px solid var(--vc-line);
+      .who { color: var(--vc-plum-ink); }
+      p { font-family: var(--vc-display); font-weight: 700; font-size: 1.04rem; line-height: 1.38; color: var(--vc-ink); }
+    }
+    .vc-ans {
+      padding: 15px 16px 16px; border-radius: 16px;
+      background: linear-gradient(140deg, #FFF4E9, #FFE9DA);
+      border: 1px solid rgba(216, 27, 69, 0.14);
+      .who { color: var(--vc-orange); }
+      p { font-size: 0.97rem; line-height: 1.6; color: #4A3C40; }
+    }
+  }
+  .vc-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .vc-chip {
+    padding: 6px 11px; border-radius: 100px; font-weight: 700; font-size: 0.76rem;
+    background: rgba(43, 21, 8, 0.07); border: 1px solid rgba(43, 21, 8, 0.16); color: #5A3A22;
+  }
+  .vc-chip--ref { background: var(--vc-ink); border-color: var(--vc-ink); color: #FFC178; }
+
+  /* ---- the answer section: a head, then two cards --------------- */
+  .vc-answer-head {
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: start;
+    .vc-h2 { max-width: 14ch; }
+    .vc-p { margin-top: 0; max-width: 54ch; }
+  }
+  .vc-answer-cards {
+    display: grid; grid-template-columns: 1.06fr 0.94fr; gap: clamp(18px, 2.4vw, 28px);
+    margin-top: clamp(34px, 4.2vw, 54px); align-items: start;
+  }
+
+  /* ---- the trivia rung ------------------------------------------ */
+  .vc-quiz {
+    margin-top: 20px; padding: 16px 18px; border-radius: 18px;
+    background: rgba(255, 255, 255, 0.58); border: 1px solid rgba(180, 86, 0, 0.22);
+  }
+  .vc-quiz-lbl { display: block; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: #9C3F00; }
+  .vc-quiz-q {
+    margin: 9px 0 13px !important; font-family: var(--vc-display); font-weight: 700;
+    font-size: 1.02rem !important; line-height: 1.34 !important; color: #2B1508 !important;
+  }
+  .vc-quiz-a {
+    display: flex; flex-direction: column; gap: 7px;
+    li {
+      padding: 9px 13px; border-radius: 100px; font-weight: 600; font-size: 0.92rem;
+      background: rgba(43, 21, 8, 0.06); border: 1px solid rgba(43, 21, 8, 0.12); color: #57331B;
+    }
+    .is-right {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: #2B1508; border-color: #2B1508; color: #FFE7C4; font-weight: 700;
+      .tick { color: #FFB03D; }
+    }
+  }
+  .vc-quiz-rung {
+    display: flex; gap: 5px; margin-top: 14px;
+    i { flex: 1; height: 5px; border-radius: 3px; background: rgba(43, 21, 8, 0.14); }
+    .on { background: linear-gradient(90deg, #C2540B, #FFB03D); box-shadow: 0 0 10px 1px rgba(255, 168, 46, 0.5); }
+  }
+
+  /* ==========================================================
+     §3 THE BODY
+     ========================================================== */
+  .vc-body-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 4.4vw, 60px); align-items: center; }
+  .vc-modules { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(18px, 2.4vw, 26px); margin-top: clamp(34px, 4.4vw, 56px); align-items: stretch; }
+  .vc-mod {
+    position: relative; overflow: hidden; border-radius: 26px; display: flex; flex-direction: column;
+    padding: clamp(26px, 3.2vw, 40px);
+    .kk { display: block; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+    p { text-wrap: pretty; }
+  }
+  .vc-mod--campaign .vc-meter { margin-top: clamp(22px, 3vw, 30px); }
+  .vc-mod--campaign {
+    background: var(--vc-grad-campaign); color: #fff;
+    box-shadow: 0 40px 84px -32px rgba(40, 8, 24, 0.6);
+    &::before {
+      content: ""; position: absolute; top: -26%; left: -14%; width: 480px; height: 440px;
+      z-index: 0; pointer-events: none; filter: blur(50px);
+      background: radial-gradient(circle, rgba(255, 168, 46, 0.24), transparent 64%);
+    }
+    > * { position: relative; z-index: 1; }
+    .kk { color: #FFA51F; }
+    .vc-h3 { color: #fff !important; }
+    p { margin-top: 20px; font-size: clamp(1rem, 2.4vw, 1.08rem); line-height: 1.66; color: #DCCFD6; max-width: 50ch; }
+  }
+  .vc-mod--trivia {
+    background: var(--vc-grad-amber); border: 1px solid rgba(180, 86, 0, 0.22);
+    box-shadow: 0 32px 70px -34px rgba(150, 72, 0, 0.44);
+    .kk { color: #9C3F00; }
+    .vc-h3 { color: #2B1508 !important; font-size: clamp(1.5rem, 3.1vw, 2.1rem); }
+    p { margin-top: 18px; font-size: 1.03rem; line-height: 1.64; color: #57331B; }
+  }
+  .vc-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 26px; }
+  .vc-tag {
+    padding: 9px 16px; border-radius: 100px; font-family: var(--vc-display); font-weight: 700; font-size: 0.86rem;
+    background: rgba(43, 21, 8, 0.10); border: 1px solid rgba(43, 21, 8, 0.22); color: #2B1508;
+  }
+  .vc-tag--solid { background: #2B1508; border-color: #2B1508; color: #FFE7C4; }
+
+  /* the shared light meter */
+  .vc-meter {
+    margin-top: auto; padding: 22px 24px; border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .vc-meter-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px;
+    .lbl { font-weight: 700; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: #C9BBC2; }
+    .now { font-family: var(--vc-display); font-weight: 700; font-size: 0.95rem; color: #FFC178; }
+  }
+  .vc-meter-track {
+    position: relative; height: 12px; border-radius: 100px; overflow: hidden;
+    background: rgba(255, 255, 255, 0.12);
+    i {
+      position: absolute; inset: 0 38% 0 0; border-radius: 100px; display: block;
+      background: linear-gradient(90deg, #C2540B, #FFB03D 62%, #FFE0A8);
+      animation: vcMeter 4.2s ease-in-out infinite;
+    }
+  }
+  .vc-meter-legend {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px;
+    span { font-size: 0.84rem; font-weight: 600; color: #A79BA2; }
+    .on { font-weight: 700; color: #FFC178; }
+  }
+  .vc-meter-note { margin-top: 16px !important; font-size: 0.92rem !important; line-height: 1.55 !important; color: #C9BBC2 !important; }
+
+  /* ==========================================================
+     §4 CHRISTIAN SINGLES — the page's pop moment
+     ========================================================== */
+  .vc-singles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 4vw, 52px); align-items: center; }
+  .vc-beats { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2.2vw, 24px); margin-top: clamp(28px, 3.4vw, 42px); align-items: stretch; }
+  .vc-beat {
+    display: flex; flex-direction: column; border-radius: 24px; padding: clamp(24px, 2.8vw, 34px);
+    .kk { display: block; font-weight: 700; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+    .vc-h3 { margin-bottom: 16px; }
+    p { font-size: 1rem; line-height: 1.62; text-wrap: pretty; }
+  }
+  .vc-beat-kick { margin-top: auto; padding-top: 20px; font-family: var(--vc-display); font-weight: 800; font-size: 1.04rem; line-height: 1.34; }
+  .vc-beat--light {
+    background: rgba(255, 255, 255, 0.97); box-shadow: 0 30px 66px -30px rgba(40, 3, 16, 0.5);
+    .kk { color: var(--vc-plum-ink); }
+    .vc-h3 { color: #17070D !important; }
+    p { color: #55424A; }
+    .vc-beat-kick { color: var(--vc-plum-ink); }
+  }
+  .vc-beat--ink {
+    background: #170B11; box-shadow: 0 30px 66px -30px rgba(20, 2, 10, 0.66); overflow: hidden;
+    .kk { color: #FFA51F; }
+    .vc-h3 { color: #fff !important; }
+    p { color: #C9BBC2; }
+    .vc-beat-kick { color: #FFC178; }
+  }
+  .vc-beat--glass {
+    background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.30);
+    .kk { color: #FFD9A8; }
+    .vc-h3 { color: #fff !important; margin-bottom: 18px; }
+    .vc-beat-kick { font-family: var(--vc-text); font-weight: 700; font-size: 0.94rem; line-height: 1.5; color: #FFD9A8; padding-top: 22px; }
+  }
+  /* the 67/33 weight bar */
+  .vc-weight {
+    display: flex; height: 12px; border-radius: 100px; overflow: hidden;
+    background: rgba(255, 255, 255, 0.12); margin-bottom: 10px;
+    i { display: block; }
+    .faith { width: 67%; background: linear-gradient(90deg, #E01A46, #FFB03D); }
+    .life { width: 33%; background: rgba(255, 255, 255, 0.20); }
+  }
+  .vc-weight-legend {
+    display: flex; justify-content: space-between; gap: 10px; margin-bottom: 18px;
+    span { font-weight: 600; font-size: 0.78rem; letter-spacing: 0.05em; color: #A79BA2; }
+    .on { font-weight: 700; color: #FFC178; }
+  }
+  .vc-steps {
+    display: flex; flex-direction: column; gap: 12px;
+    li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.99rem; line-height: 1.5; color: #FFF0E4; }
+    .n {
+      width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto;
+      display: grid; place-items: center; background: rgba(255, 255, 255, 0.94);
+      color: var(--vc-plum-ink); font-family: var(--vc-display); font-weight: 800; font-size: 0.78rem;
+    }
+  }
+
+  /* ==========================================================
+     §5a THE COST — dark, quiet on purpose
+     ========================================================== */
+  .vc-cost {
+    padding: clamp(68px, 9vw, 126px) 0; text-align: center;
+    .vc-container { max-width: 920px; }
+    h2 {
+      font-weight: 900; font-size: clamp(2rem, 4.6vw, 3.5rem); line-height: 1.04;
+      letter-spacing: -0.028em; color: #fff !important; text-align: center; margin: 0 auto; text-wrap: balance;
+    }
+    p {
+      font-size: clamp(1.04rem, 2.6vw, 1.16rem); line-height: 1.72; color: #CFC3CA !important;
+      max-width: 62ch; margin: 24px auto 0; text-align: center; text-wrap: pretty;
+    }
+  }
+  .vc-tick { height: 3px; width: 76px; border-radius: 2px; margin: 0 auto clamp(30px, 4vw, 44px); background: var(--vc-grad-rule); }
+
+  /* ==========================================================
+     §5b COME AND SEE — the page ends bright
+     ========================================================== */
+  .vc-final {
+    position: relative; overflow: hidden; background: #FFFFFF;
+    --vc-final-pad: clamp(78px, 10vw, 146px);
+    padding: var(--vc-final-pad) 0; text-align: center;
+    .vc-container { max-width: 920px; }
+    h2 {
+      font-weight: 900; font-size: clamp(2.9rem, 7.4vw, 5.6rem); line-height: 0.96;
+      letter-spacing: -0.03em; text-align: center;
+    }
+    p {
+      font-size: clamp(1.08rem, 2.7vw, 1.2rem); line-height: 1.66; color: var(--vc-body) !important;
+      max-width: 52ch; margin: 24px auto 0; text-align: center; text-wrap: pretty;
+    }
+    .vc-cta-group { justify-content: center; margin-top: clamp(30px, 4vw, 46px); }
+    .vc-btn { font-size: 1.12rem; padding: 19px 42px; }
+  }
+  /* the scarcity note lives HERE, not at the top of the page */
+  .vc-founding {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 20px 9px 12px; border-radius: 100px;
+    background: #fff; border: 1.5px solid rgba(216, 27, 69, 0.26);
+    box-shadow: 0 14px 30px -16px rgba(168, 18, 58, 0.4);
+    margin-bottom: clamp(24px, 3vw, 34px);
+    font-weight: 700; font-size: 0.85rem; color: var(--vc-plum-ink);
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: linear-gradient(135deg, #FF6A00, #D81B45); box-shadow: 0 0 0 4px rgba(216, 27, 69, 0.16); }
+  }
+
+  .vc-foot {
+    background: var(--vc-dark-2); padding: 30px var(--vc-gutter); text-align: center;
+    font-family: var(--vc-display); font-weight: 700; font-size: 0.9rem;
+    letter-spacing: 0.06em; color: #CFC3CA;
+    b { color: #FFA51F; font-weight: 700; }
+  }
+}
+
+/* ==========================================================
+   5. "HOW IT WORKS" MODAL
+   ========================================================== */
+#vc-hiw-modal.vc-hiw-overlay {
+  position: fixed; inset: 0; z-index: 2000000; display: none;
+  align-items: center; justify-content: center; padding: 24px;
+  background: rgba(20, 15, 18, 0.62);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+#vc-hiw-modal.is-open { display: flex; }
+
+.vc-hiw-dialog {
+  position: relative; width: 100%; max-width: 680px; max-height: 90vh; overflow: auto;
+  background: #fff; border: 1px solid rgba(23, 17, 20, 0.10); border-radius: 28px;
+  padding: 48px 48px 38px; color: #171114;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  box-shadow: 0 50px 110px -30px rgba(168, 18, 58, 0.5);
+}
+.vc-hiw-close {
+  position: absolute; top: 18px; right: 18px; width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(23, 17, 20, 0.12); background: rgba(23, 17, 20, 0.03);
+  color: #7A7076; font-size: 21px; line-height: 1; cursor: pointer;
+  display: grid; place-items: center; transition: background 0.2s, color 0.2s;
+}
+.vc-hiw-close:hover { background: rgba(216, 27, 69, 0.10); color: #C9184A; }
+
+.vc-hiw-eyebrow {
+  display: inline-block; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #C2540B; margin-bottom: 14px;
+}
+.vc-hiw-title {
+  font-family: 'Outfit', sans-serif; font-weight: 900;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1.03; letter-spacing: -0.038em;
+  color: #171114; margin: 0 0 14px;
+}
+.vc-hiw-sub { color: #574E53; font-size: 1.02rem; line-height: 1.6; margin: 0 0 32px; max-width: 50ch; text-wrap: pretty; }
+
+.vc-hiw-steps { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+.vc-hiw-steps::before {
+  content: ""; position: absolute; left: 23px; top: 26px; bottom: 26px; width: 2px;
+  background: linear-gradient(to bottom, rgba(194, 84, 11, 0.7), rgba(216, 27, 69, 0.25), transparent);
+}
+.vc-hiw-step { position: relative; display: grid; grid-template-columns: 48px 1fr; gap: 18px; align-items: start; }
+.vc-hiw-n {
+  width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center;
+  background: linear-gradient(135deg, #D81B45, #C2540B);
+  box-shadow: 0 12px 24px -10px rgba(168, 18, 58, 0.6);
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.95rem; color: #fff;
+}
+.vc-hiw-body h3 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.14rem; letter-spacing: -0.02em; color: #171114; margin: 6px 0; }
+.vc-hiw-body p { color: #574E53; font-size: 0.97rem; line-height: 1.55; margin: 0; text-wrap: pretty; }
+
+.vc-hiw-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(23, 17, 20, 0.10); }
+.vc-hiw-cta {
+  display: inline-flex; align-items: center; gap: 9px; padding: 15px 30px; border-radius: 100px;
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.02rem; text-decoration: none;
+  color: #fff !important; background: linear-gradient(100deg, #D81B45, #C2540B);
+  box-shadow: 0 14px 30px -10px rgba(168, 18, 58, 0.5);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.vc-hiw-cta:hover { transform: translateY(-3px); box-shadow: 0 22px 42px -12px rgba(168, 18, 58, 0.6); }
+.vc-hiw-reassure { color: #7A7076; font-size: 0.9rem; font-style: italic; }
+
+@media (max-width: 560px) {
+  #vc-hiw-modal.vc-hiw-overlay.is-open { display: block; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0; }
+  .vc-hiw-dialog { max-width: none; min-height: 100vh; max-height: none; overflow: visible; border-radius: 0; border: 0; padding: 64px 18px 40px; }
+  .vc-hiw-title { font-size: 1.8rem; }
+  .vc-hiw-close { position: fixed; top: 12px; right: 12px; width: 42px; height: 42px; background: rgba(255, 255, 255, 0.9); }
+}
+@media (min-width: 561px) and (prefers-reduced-motion: no-preference) {
+  #vc-hiw-modal.is-open .vc-hiw-dialog { animation: vcHiwIn 0.32s cubic-bezier(0.22, 1, 0.36, 1); }
+  @keyframes vcHiwIn { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
+}
+
+/* ==========================================================
+   6. MOTION + SCROLL-REVEAL
+   ========================================================== */
+@keyframes vcPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.82; transform: scale(1.05); } }
+@keyframes vcBar { from { opacity: 0.12; transform: scaleY(0.35); } }
+@keyframes vcMeter {
+  0%, 100% { opacity: 0.78; box-shadow: 0 0 24px 2px rgba(255, 168, 46, 0.45); }
+  50% { opacity: 1; box-shadow: 0 0 44px 6px rgba(255, 168, 46, 0.72); }
+}
+
+html.vc-reveal-ready .vc-landing-wrapper [data-reveal] {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.vc-reveal-ready .vc-landing-wrapper [data-reveal].in { opacity: 1; transform: none; }
+.vc-landing-wrapper [data-reveal][data-d="1"] { transition-delay: 0.09s; }
+.vc-landing-wrapper [data-reveal][data-d="2"] { transition-delay: 0.18s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.vc-reveal-ready .vc-landing-wrapper [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .vc-landing-wrapper .vc-hero-visual::before,
+  .vc-landing-wrapper .vc-meter-track i { animation: none !important; }
+  /* V12 — the road is simply there, fully drawn */
+  html.vc-reveal-ready .vc-landing-wrapper .vc-road-img,
+  html.vc-reveal-ready .vc-landing-wrapper .vc-arrive-img { transform: none !important; }
+  html.vc-reveal-ready .vc-landing-wrapper .vc-way i { height: 100% !important; }
+  html.vc-reveal-ready .vc-landing-wrapper .vc-gatemark { transform: translateX(-50%) scale(1) !important; }
+}
+
+/* ==========================================================
+   6b. V9 ADDITIONS
+   Everything here is additive. Every hidden-then-shown state is
+   gated on html.vc-reveal-ready (set by the initializer), so with
+   JS absent nothing is ever hidden.
+   ========================================================== */
+
+/* ---- header: transparent only while the page is at the top ---- */
+html.vc-at-top body:has(.vc-landing-wrapper) .d-header {
+  background: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+
+/* ---- lazy plates ---------------------------------------------- */
+html.vc-reveal-ready .vc-landing-wrapper .vc-fig:not(.vc-img-on) { background-image: none; }
+.vc-landing-wrapper .vc-fig { background-color: #2A1A20; }
+
+.vc-landing-wrapper {
+  /* ---- Scripture speaks in its own voice ---------------------- */
+  .vc-pair-word .a {
+    font-family: var(--vc-scripture); font-weight: 500; letter-spacing: -0.012em;
+    font-size: clamp(1.2rem, 2.8vw, 1.56rem); line-height: 1.3;
+  }
+  .vc-pair--feature .vc-pair-word .a { font-weight: 600; font-size: clamp(1.38rem, 3.4vw, 1.92rem); line-height: 1.22; letter-spacing: -0.018em; }
+  .vc-pcard-verse { font-family: var(--vc-scripture); font-weight: 400; font-size: 1.05rem; line-height: 1.4; }
+
+  /* ---- designed focus ring: white inner, ink outer — reads on
+          every surface the page has ------------------------------ */
+  .vc-btn:focus-visible {
+    outline: 2px solid #fff; outline-offset: 2px;
+    box-shadow: 0 0 0 6px var(--vc-ink), 0 0 0 9px #FFA51F;
+  }
+
+  /* ---- singles: the short card gets the narrow column ---------- */
+  .vc-beats { grid-template-columns: 0.86fr 1.14fr 1fr; }
+
+  /* ---- canon readout ------------------------------------------- */
+  .vc-canon-bars i { cursor: pointer; transform-origin: 50% 100%; transition: transform 0.25s var(--vc-ease), filter 0.25s ease, opacity 0.5s ease; }
+  .vc-canon-bars i:hover,
+  .vc-canon-bars i.is-on { transform: scaleY(1.22); filter: brightness(1.35) saturate(1.1); }
+  .vc-canon-read {
+    margin-top: 14px; min-height: 1.5em;
+    font-family: var(--vc-display); font-weight: 600; font-size: 0.92rem; letter-spacing: 0.01em;
+    color: #A79BA2; transition: color 0.25s ease;
+    &.is-on { color: #FFC178; }
+  }
+  .vc-canon-read + .vc-canon-legend { margin-top: 12px; }
+
+  /* ---- phone join bar (hidden everywhere until §7 turns it on) -- */
+  .vc-joinbar { display: none; }
+}
+
+/* ---- motion with meaning -------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.vc-reveal-ready .vc-landing-wrapper {
+    /* the shrug is heard first; the answer arrives; the shrug recedes */
+    .vc-pair .vc-pair-word {
+      opacity: 0; transform: translateX(14px);
+      transition: opacity 0.7s var(--vc-ease) 0.35s, transform 0.7s var(--vc-ease) 0.35s;
+    }
+    .vc-pair.in .vc-pair-word { opacity: 1; transform: none; }
+    .vc-pair .vc-pair-world .q { color: #EFE4EA; transition: color 0.9s ease 0.9s; }
+    .vc-pair.in .vc-pair-world .q { color: #9F939A; }
+    .vc-pair--feature.in .vc-pair-world .q { color: #D9CBD2; }
+
+    /* 66 bars fill in canonical order */
+    .vc-inkcard:not(.in) .vc-canon-bars i { opacity: 0.12; transform: scaleY(0.35); }
+    .vc-inkcard.in .vc-canon-bars i { animation: vcBar 0.55s var(--vc-ease) backwards; }
+    @for $n from 1 through 66 {
+      .vc-inkcard.in .vc-canon-bars i:nth-child(#{$n}) { animation-delay: #{0.25 + $n * 0.014}s; }
+    }
+
+    /* V15 — each waypoint lights as you reach it */
+    .vc-gatemark { transform: translateX(-50%) scale(0.75); transition: transform 0.6s var(--vc-ease), color 0.6s ease, filter 0.6s ease; }
+    .vc-sec.vc-seen .vc-gatemark { transform: translateX(-50%) scale(1); }
+
+    /* V15 — the plate settles; the arrival opens */
+    .vc-road-img { transform: scale(1.06); transition: transform 1.8s var(--vc-ease); }
+    .vc-road.in .vc-road-img { transform: none; }
+    .vc-arrive-img { transform: scale(1.08); transition: transform 1.6s var(--vc-ease); }
+    .vc-arrive.in .vc-arrive-img { transform: none; }
+
+    /* the light climbs from guttering to "holds" */
+    .vc-mod--campaign .vc-meter-track i { transition: right 1.8s var(--vc-ease) 0.5s; }
+    .vc-mod--campaign:not(.in) .vc-meter-track i { right: 88%; }
+  }
+}
+
+/* ==========================================================
+   7. RESPONSIVE
+   Breakpoints exist to change RELATIONSHIPS, not just widths.
+   ========================================================== */
+@media (max-width: 1000px) {
+  .vc-landing-wrapper {
+    /* V17 — the road lives in this margin, so the margin has to be
+       wide enough to hold it with air on both sides. */
+    --vc-gutter: 30px;
+    --vc-rail: 9px;
+
+    .vc-way { width: 2px; }
+    .vc-way i::after { width: 10px; height: 10px; }
+    .vc-gatemark { --m: 18px; top: 9px; }
+
+    /* V15 — the hero stacks; the plate becomes a full-bleed band */
+    .vc-hero { display: block; min-height: 0; &::after { display: none; } }
+    .vc-hero-copy { max-width: none;
+      padding: clamp(22px, 4vw, 40px) var(--vc-gutter) clamp(26px, 4vw, 40px);
+      .vc-h1, .vc-p, .vc-hero-note { max-width: none; } }
+    .vc-road { position: relative; inset: auto; width: 100%; aspect-ratio: 16 / 9;
+      -webkit-mask-image: none; mask-image: none; }
+    .vc-road-img { background-position: 50% 6%; }
+    .vc-road-cap { left: 0; right: 0; width: auto; -webkit-mask-image: none; mask-image: none; }
+    .vc-arrive { aspect-ratio: 16 / 8; }
+
+    .vc-hero-grid { grid-template-columns: 1fr; gap: 44px; }
+    .vc-hero-visual { min-height: 0; }
+    .vc-road-img { background-position: 50% 6%; }
+    .vc-charge { grid-template-columns: 1fr; }
+    .vc-answer-cards { grid-template-columns: 1fr; }
+    .vc-answer-head { grid-template-columns: 1fr; gap: 22px; .vc-h2 { max-width: 20ch; } }
+    .vc-body-grid { grid-template-columns: 1fr; }
+    .vc-modules { grid-template-columns: 1fr; }
+    .vc-singles-grid { grid-template-columns: 1fr; }
+    .vc-beats { grid-template-columns: 1fr 1fr; }
+
+    /* a 4:5 portrait at full column width is absurdly tall */
+    .vc-fig--charge { aspect-ratio: 16 / 8; }
+    .vc-fig--singles { aspect-ratio: 16 / 8; }
+  }
+}
+
+@media (max-width: 700px) {
+  .vc-landing-wrapper {
+    /* V17 — 26px, not 18: the road runs down the left margin now and
+       it has to have air on both sides of it. */
+    --vc-gutter: 26px;
+    --vc-rail: 8px;
+
+    .vc-road { aspect-ratio: 16 / 11; }
+    .vc-road-img { background-position: 50% 2%; }
+    .vc-road-cap { padding: 46px 18px 16px; .vs { max-width: none; } }
+    .vc-arrive { aspect-ratio: 5 / 4; }
+    .vc-arrive-img { background-position: 50% 42%; }
+    /* the way tucks into the phone gutter */
+    .vc-way i::after { width: 9px; height: 9px; }
+    .vc-gatemark { --m: 17px; }
+    /* V12 — the page carries five vignettes now; the air between
+       blocks tightens so the phone scroll does not run away. */
+    --vc-pad: 48px;
+
+    .vc-pairs { gap: 10px; }
+    .vc-pair { padding: 16px; }
+    /* V12 — on a phone the parallel cards become a swipe row with the
+       next card peeking, instead of a column two screens tall. */
+    .vc-modules,
+    .vc-beats {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 86%;
+      grid-template-columns: none; gap: 12px;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      /* bleeds off the RIGHT only — the left margin belongs to the road */
+      padding: 2px var(--vc-gutter) 6px 0;
+      margin-right: calc(var(--vc-gutter) * -1);
+      &::-webkit-scrollbar { display: none; }
+      > * { scroll-snap-align: start; }
+    }
+    .vc-modules { margin-top: 26px; }
+    .vc-beats { margin-top: 24px; }
+    .vc-answer-cards { margin-top: 26px; gap: 14px; }
+    .vc-answer-head { gap: 18px; }
+    .vc-body-grid, .vc-singles-grid, .vc-charge { gap: 26px; }
+    .vc-quiz { margin-top: 16px; padding: 14px 15px; }
+    .vc-vig { gap: 10px; }
+
+    /* V12 — the panel goes landscape so it lands inside the first
+       screen on a phone, and the hero copy tightens to help it.      */
+    .vc-road { width: 100%; aspect-ratio: 16 / 10; border-radius: 22px; }
+    .vc-road-img { background-position: 50% 2%; }
+    .vc-road-cap { padding: 36px 18px 15px; }
+    .vc-hero-visual { min-height: 0; }
+    .vc-hero { padding-top: 18px; }
+    .vc-wordmark { margin-bottom: 18px; }
+    .vc-hero-grid { gap: 26px; }
+    .vc-hero-copy .vc-p { margin-top: 14px; }
+    .vc-hero-note { margin-top: 13px; }
+    .vc-cta-group { margin-top: 18px; }
+    .vc-cta-group .vc-btn { padding: 15px 28px; }
+    .vc-fig--charge,
+    .vc-fig--body,
+    .vc-fig--singles { aspect-ratio: 4 / 3; }
+    .vc-beats { grid-template-columns: 1fr; }
+
+    /* the answer stacks UNDER the shrug — so the rule moves to the top,
+       otherwise a left border on a full-width block reads as decoration */
+    .vc-pair { grid-template-columns: 1fr; gap: 16px; }
+    .vc-pair-word {
+      border-left: 0; padding-left: 0;
+      border-top: 1px solid rgba(255, 165, 31, 0.4); padding-top: 16px;
+    }
+
+    .vc-canon-bars { gap: 4px; i { height: 20px; border-radius: 3px; } }
+    .vc-vig { padding: 18px 16px; }
+    .vc-post--reply { margin-left: 10px; padding-left: 12px; }
+    .vc-turn-row p { max-width: 100%; }
+    .vc-inkcard { padding: 24px 18px; }
+    .vc-mod { padding: 24px 18px; }
+    .vc-beat { padding: 24px 18px; }
+    .vc-meter { padding: 18px 16px; }
+
+    /* full-width tap targets on a phone */
+    .vc-cta-group { flex-direction: column; align-items: stretch; }
+    .vc-cta-group .vc-btn { width: 100%; }
+
+    /* V9 — sticky join bar. Shown only when the initializer adds .is-on
+       (hero buttons scrolled away, closing invitation not yet in view). */
+    .vc-joinbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 900;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px)) 18px;
+      background: rgba(255, 253, 252, 0.94);
+      -webkit-backdrop-filter: saturate(1.5) blur(16px); backdrop-filter: saturate(1.5) blur(16px);
+      border-top: 1px solid rgba(23, 17, 20, 0.10);
+      box-shadow: 0 -14px 34px -18px rgba(23, 17, 20, 0.35);
+      visibility: hidden; transform: translateY(110%);
+      transition: transform 0.45s var(--vc-ease), visibility 0s linear 0.45s;
+      .t { font-family: var(--vc-display); font-weight: 700; font-size: 0.95rem; line-height: 1.25; color: var(--vc-ink); }
+      .vc-btn { padding: 12px 22px; font-size: 0.98rem; min-height: 44px; flex: 0 0 auto; }
+      &.is-on { visibility: visible; transform: none; transition: transform 0.45s var(--vc-ease), visibility 0s; }
+    }
+  }
+}
+
+/* ==========================================================
+   THE WAY WITHOUT THE SCRIPT  (V15)
+   No script means no way to know how far the reader has come, so the
+   road is simply shown whole and lit, and the travelling light — which
+   would otherwise sit at the very top — is dropped.
+   ========================================================== */
+html:not(.vc-reveal-ready) .vc-landing-wrapper .vc-way i { height: 100%; }
+html:not(.vc-reveal-ready) .vc-landing-wrapper .vc-way i::after { display: none; }
+
+/* ==========================================================
+   THE PLATES  (V15)
+   Discourse injects these from about.json:
+     "assets": { "narrow_road": "assets/vc-plate-06.webp",
+                 "the_gate":    "assets/vc-plate-07.webp" }
+   ========================================================== */
+@if variable-exists(narrow_road) {
+  .vc-landing-wrapper .vc-road-img { background-image: url($narrow_road); }
+}
+@if variable-exists(the_gate) {
+  .vc-landing-wrapper .vc-arrive-img { background-image: url($the_gate); }
+}
